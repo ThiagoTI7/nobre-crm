@@ -10,7 +10,7 @@ import { Drawer } from './drawer';
 import { ListView } from './list-view';
 import { LossDialog } from './loss-dialog';
 import { BoardSkeleton, EmptyState, ErrorState } from './states';
-import { TodayStrip } from './today-strip';
+import { TodayPanel } from './today-strip';
 import { ToastRegion, useToasts } from './toasts';
 import { Toolbar, type View } from './toolbar';
 
@@ -97,23 +97,19 @@ export function App() {
 
   return (
     <div className="mx-auto max-w-[110rem] px-4 py-5 sm:px-6">
-      <header className="mb-4 flex flex-wrap items-end justify-between gap-2">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Funil da Nobre Brindes</h1>
-          <p className="text-sm text-muted">Oportunidades B2B do time comercial</p>
+      <header className="mb-5 flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-3">
+          <span aria-hidden className="font-display grid h-10 w-10 place-items-center rounded-xl bg-brand text-lg font-bold text-white">N</span>
+          <div>
+            <h1 className="text-xl font-semibold leading-tight">Nobre Brindes</h1>
+            <p className="text-sm text-muted">Funil de vendas</p>
+          </div>
         </div>
-        {asOf && <p className="text-sm text-muted">Situação em {dateBR(asOf)}</p>}
+        {asOf && <p className="text-sm text-muted">Situação em <strong className="font-semibold text-ink">{dateBR(asOf)}</strong></p>}
       </header>
 
-      <div className="space-y-4">
-        {status === 'ready' && (
-          <TodayStrip
-            flagged={flagged}
-            attentionOnly={filters.attentionOnly}
-            onOpen={openDrawer}
-            onToggleOnly={() => setFilters({ ...filters, attentionOnly: !filters.attentionOnly })}
-          />
-        )}
+      <div className="space-y-5">
+        {status === 'ready' && <TodayPanel data={data} flagged={flagged} onOpen={openDrawer} />}
 
         <Toolbar
           filters={filters}

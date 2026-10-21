@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import '@fontsource-variable/schibsted-grotesk';
+import '@fontsource-variable/figtree';
+import '@fontsource-variable/bricolage-grotesque';
 import './globals.css';
 
 export const metadata: Metadata = {

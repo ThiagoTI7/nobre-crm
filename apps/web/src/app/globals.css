@@ -1,22 +1,33 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Schibsted Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Figtree Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Bricolage Grotesque Variable", "Figtree Variable", ui-sans-serif, system-ui, sans-serif;
 
-  --color-paper: #f3f5f7;
-  --color-ink: #17202c;
-  --color-muted: #566273;
-  --color-line: #d8dee6;
-  --color-brand: #0b5c59;
-  --color-brand-soft: #e1f0ee;
-  --color-alert: #b3261e;
-  --color-alert-soft: #fdecea;
-  --color-warn: #8a5300;
-  --color-warn-soft: #fff2d6;
+  /* Verde-pinho (marca) + tomate (urgência) sobre um fundo frio e neutro */
+  --color-paper: #edf0ef;
+  --color-surface: #ffffff;
+  --color-lane: #e0e6e4;
+  --color-ink: #14231f;
+  --color-muted: #4a5b56;
+  --color-line: #ccd6d2;
+
+  --color-brand: #0b5d4b;
+  --color-brand-soft: #d9ede6;
+  --color-pine: #0e2f29;
+
+  --color-alert: #c2361f;
+  --color-alert-soft: #fce6e0;
+  --color-warn: #7d5200;
+  --color-warn-soft: #fff0cc;
+  --color-ok: #1b6b3a;
+  --color-ok-soft: #dff2e5;
 }
 
-html { background: var(--color-paper); color: var(--color-ink); }
-body { font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+html { background: var(--color-paper); color: var(--color-ink); font-size: 15px; }
+body { font-family: var(--font-sans); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+h1, h2, .font-display { font-family: var(--font-display); letter-spacing: -0.01em; }
+.tabular { font-variant-numeric: tabular-nums; }
 
 :focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
 

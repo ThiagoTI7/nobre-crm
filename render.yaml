@@ -1,0 +1,22 @@
+# Blueprint do Render (plano gratuito) para a API.
+# O banco fica no Neon e o site na Vercel (ver README, seção "Hospedagem gratuita").
+services:
+  - type: web
+    name: nobre-crm-api
+    runtime: node
+    plan: free
+    rootDir: apps/api
+    buildCommand: npm install --include=dev && npm run build
+    startCommand: npm start        # aplica migrations pendentes e sobe a API
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        sync: false                # cole a connection string do Neon no painel
+      - key: CORS_ORIGINS
+        sync: false                # URL do site na Vercel (opcional: o site fala com a API pelo servidor)
+      - key: REFERENCE_DATE
+        value: "2026-10-15"        # data do case; apague para usar a data real
+      - key: TRUST_PROXY
+        value: "true"
+      - key: NODE_VERSION
+        value: "22"

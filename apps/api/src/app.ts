@@ -29,6 +29,8 @@ export interface AppDeps {
   today: () => string;
   corsOrigins?: string[];
   logger?: boolean;
+  /** Atrás de proxy (Render, etc.): usa o IP real do cliente no rate limit. */
+  trustProxy?: boolean;
 }
 
 // ---------------------------------------------------------------- schemas ---
@@ -113,7 +115,7 @@ function assertNotFuture(date: string | null | undefined, today: string, field: 
 
 export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
   const { pool, today } = deps;
-  const app = Fastify({ logger: deps.logger ?? false, bodyLimit: 100_000 });
+  const app = Fastify({ logger: deps.logger ?? false, bodyLimit: 100_000, trustProxy: deps.trustProxy ?? false });
 
   await app.register(helmet);
   await app.register(cors, { origin: deps.corsOrigins?.length ? deps.corsOrigins : false });

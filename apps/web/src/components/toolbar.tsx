@@ -16,7 +16,7 @@ interface Props {
 }
 
 const field =
-  'h-9 rounded-md border border-line bg-white px-3 text-sm placeholder:text-muted/70 focus:border-brand';
+  'h-10 rounded-xl border border-line bg-surface px-3 text-sm placeholder:text-muted/70 focus:border-brand';
 
 export function Toolbar({ filters, setFilters, meta, view, setView, attentionCount, refreshing, onRefresh }: Props) {
   const set = (patch: Partial<Filters>) => setFilters({ ...filters, ...patch });
@@ -30,7 +30,7 @@ export function Toolbar({ filters, setFilters, meta, view, setView, attentionCou
           value={filters.q}
           onChange={(e) => set({ q: e.target.value })}
           placeholder="Buscar empresa, brinde ou código"
-          className={`${field} w-72 max-w-full`}
+          className={`${field} w-80 max-w-full`}
         />
       </div>
 
@@ -67,30 +67,30 @@ export function Toolbar({ filters, setFilters, meta, view, setView, attentionCou
       <button
         aria-pressed={filters.attentionOnly}
         onClick={() => set({ attentionOnly: !filters.attentionOnly })}
-        className={`h-9 rounded-md border px-3 text-sm font-medium ${
-          filters.attentionOnly ? 'border-alert bg-alert-soft text-alert' : 'border-line bg-white hover:bg-paper'
+        className={`h-10 rounded-xl border px-3 text-sm font-medium ${
+          filters.attentionOnly ? 'border-alert bg-alert-soft text-alert' : 'border-line bg-surface hover:bg-paper'
         }`}
       >
-        Só com atenção ({attentionCount})
+        Só com ação hoje ({attentionCount})
       </button>
 
       <div className="ml-auto flex items-center gap-2">
         <button
           onClick={onRefresh}
           disabled={refreshing}
-          className="h-9 rounded-md border border-line bg-white px-3 text-sm hover:bg-paper disabled:opacity-60"
+          className="h-10 rounded-xl border border-line bg-surface px-3 text-sm hover:bg-paper disabled:opacity-60"
         >
           {refreshing ? 'Atualizando…' : 'Atualizar'}
         </button>
-        <div role="group" aria-label="Visualização" className="flex overflow-hidden rounded-md border border-line bg-white">
+        <div role="group" aria-label="Visualização" className="flex overflow-hidden rounded-xl border border-line bg-surface">
           {(['kanban', 'lista'] as const).map((v) => (
             <button
               key={v}
               aria-pressed={view === v}
               onClick={() => setView(v)}
-              className={`h-9 px-3 text-sm font-medium ${view === v ? 'bg-ink text-white' : 'hover:bg-paper'}`}
+              className={`h-10 px-4 text-sm font-medium ${view === v ? 'bg-brand text-white' : 'hover:bg-paper'}`}
             >
-              {v === 'kanban' ? 'Kanban' : 'Lista'}
+              {v === 'kanban' ? 'Quadro' : 'Lista'}
             </button>
           ))}
         </div>

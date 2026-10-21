@@ -1,59 +1,91 @@
 'use client';
 
 import type { Opportunity } from '@/lib/types';
-import { actionReasons, LEVEL_STYLES } from './attention';
+import { brl } from '@/lib/format';
+import { actionReasons } from './attention';
 
 interface Props {
+  data: Opportunity[];
   flagged: Opportunity[];
-  attentionOnly: boolean;
   onOpen: (code: string) => void;
-  onToggleOnly: () => void;
 }
 
-/** O que trabalhar primeiro hoje: as negociações mais urgentes, a um clique. */
-export function TodayStrip({ flagged, attentionOnly, onOpen, onToggleOnly }: Props) {
-  if (flagged.length === 0) {
-    return (
-      <p className="rounded-xl border border-brand/25 bg-brand-soft px-4 py-3 text-sm text-brand">
-        Tudo em dia: nenhuma negociação precisa de ação hoje.
-      </p>
-    );
-  }
-  const top = flagged.slice(0, 4);
+const FINAL = ['fechamento', 'perdida'];
+const MAX_ROWS = 5;
+
+/** Único resumo da tela: o que fazer hoje (esquerda) e os números do funil (direita). */
+export function TodayPanel({ data, flagged, onOpen }: Props) {
+  const open = data.filter((o) => !FINAL.includes(o.stage));
+  const openValue = open.reduce((s, o) => s + (o.estimatedValue ?? 0), 0);
+  const won = data.filter((o) => o.stage === 'fechamento');
+  const wonValue = won.reduce((s, o) => s + (o.estimatedValue ?? 0), 0);
+  const rows = flagged.slice(0, MAX_ROWS);
+  const n = flagged.length;
+
   return (
-    <section aria-labelledby="hoje-titulo" className="rounded-xl border border-line bg-white p-4">
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 id="hoje-titulo" className="text-base font-semibold">
-          {flagged.length === 1 ? '1 negociação pede ação hoje' : `${flagged.length} negociações pedem ação hoje`}
+    <section aria-labelledby="hoje" className="grid gap-6 rounded-2xl bg-pine p-5 text-white lg:grid-cols-[1fr_17rem] lg:p-6">
+      <div>
+        <h2 id="hoje" className="text-2xl font-semibold leading-tight sm:text-[1.7rem]">
+          {n === 0 ? 'Tudo em dia hoje' : n === 1 ? '1 negociação precisa de ação hoje' : `${n} negociações precisam de ação hoje`}
         </h2>
-        <button onClick={onToggleOnly} className="text-sm font-medium text-brand underline underline-offset-2">
-          {attentionOnly ? 'Mostrar todas' : 'Ver só estas'}
-        </button>
+        <p className="mt-1 text-sm text-white/70">
+          {n === 0 ? 'Nenhum retorno atrasado, proposta vencida ou evento em risco.' : 'Da mais urgente para a menos urgente. Clique para ver o que fazer.'}
+        </p>
+
+        {n > 0 && (
+          <ul className="mt-4 divide-y divide-white/10 overflow-hidden rounded-xl bg-white/[0.06]">
+            {rows.map((o) => {
+              const reason = actionReasons(o.attention)[0];
+              const high = o.attention.level === 'high';
+              return (
+                <li key={o.code}>
+                  <button
+                    onClick={() => onOpen(o.code)}
+                    className="flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-white/10"
+                  >
+                    <span
+                      aria-hidden
+                      className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${high ? 'bg-[#ff7a5c]' : 'bg-[#f5b84a]'}`}
+                    />
+                    <span className="min-w-0 flex-1">
+                      <span className="flex flex-wrap items-baseline gap-x-2">
+                        <span className="font-semibold">{o.company}</span>
+                        <span className="text-sm text-white/60">{o.seller}</span>
+                      </span>
+                      {reason && (
+                        <span className={`block text-sm ${high ? 'text-[#ffd3c7]' : 'text-[#ffe3a8]'}`}>
+                          {reason.message}
+                        </span>
+                      )}
+                    </span>
+                    <span aria-hidden className="mt-0.5 text-sm text-white/50">Abrir</span>
+                  </button>
+                </li>
+              );
+            })}
+            {n > rows.length && (
+              <li className="px-4 py-2.5 text-sm text-white/60">
+                e mais {n - rows.length}. Use “Só com ação hoje” abaixo para ver todas.
+              </li>
+            )}
+          </ul>
+        )}
       </div>
-      <ul className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
-        {top.map((o) => {
-          const reason = actionReasons(o.attention)[0];
-          return (
-            <li key={o.code}>
-              <button
-                onClick={() => onOpen(o.code)}
-                className={`h-full w-full rounded-lg border border-line border-l-4 p-3 text-left hover:bg-paper ${LEVEL_STYLES[o.attention.level].bar}`}
-              >
-                <span className="block text-sm font-semibold">{o.company}</span>
-                <span className="block text-xs text-muted">{o.seller}</span>
-                {reason && (
-                  <span className={`mt-1 block text-xs ${o.attention.level === 'high' ? 'text-alert' : 'text-warn'}`}>
-                    {reason.message}
-                  </span>
-                )}
-              </button>
-            </li>
-          );
-        })}
-      </ul>
-      {flagged.length > top.length && (
-        <p className="mt-2 text-xs text-muted">e mais {flagged.length - top.length} em “Só com atenção”.</p>
-      )}
+
+      <dl className="grid grid-cols-2 content-start gap-4 border-t border-white/15 pt-5 lg:grid-cols-1 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
+        <Stat label="Em negociação" value={brl(openValue)} note={`${open.length} ${open.length === 1 ? 'oportunidade' : 'oportunidades'}`} />
+        <Stat label="Vendas fechadas" value={brl(wonValue)} note={`${won.length} ${won.length === 1 ? 'venda' : 'vendas'}`} />
+      </dl>
     </section>
+  );
+}
+
+function Stat({ label, value, note }: { label: string; value: string; note: string }) {
+  return (
+    <div>
+      <dt className="text-sm text-white/65">{label}</dt>
+      <dd className="font-display tabular mt-0.5 text-3xl font-semibold leading-none">{value}</dd>
+      <dd className="mt-1 text-sm text-white/65">{note}</dd>
+    </div>
   );
 }

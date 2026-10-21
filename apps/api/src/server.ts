@@ -10,7 +10,7 @@ async function main() {
     .map((s) => s.trim())
     .filter(Boolean);
 
-  const app = await buildApp({ pool, today: () => currentDate(), corsOrigins, logger: true });
+  const app = await buildApp({ pool, today: () => currentDate(), corsOrigins, logger: true, trustProxy: process.env.TRUST_PROXY === 'true' });
   const port = Number(process.env.PORT ?? 3333);
 
   const shutdown = async () => {

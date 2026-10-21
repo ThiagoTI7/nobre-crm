@@ -4,14 +4,14 @@ Primeira versão de um CRM interno para o time comercial da Nobre Brindes: funil
 
 | Camada | Tecnologia |
 |---|---|
-| Frontend | Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4 |
+| Frontend | Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4 (fontes Bricolage Grotesque e Figtree) |
 | API | Node.js 22, TypeScript, Fastify 5, Zod, `pg` (SQL puro, sem ORM) |
 | Banco | PostgreSQL 16 |
 | Testes | Vitest (unitários + integração com PostgreSQL real) |
 
 ## Sumário
 
-1. [Como executar](#1-como-executar)
+1. [Como executar](#1-como-executar) e [Hospedagem gratuita](#hospedagem-gratuita)
 2. [Estrutura do repositório](#2-estrutura-do-repositório)
 3. [Produto e UX](#3-produto-e-ux)
 4. [Engenharia: regras do funil](#4-engenharia-regras-do-funil)
@@ -71,6 +71,50 @@ npm --prefix apps/api run seed -- --reset  # volta o banco para os 7 registros o
 
 ---
 
+## Hospedagem gratuita
+
+Três serviços gratuitos, cada um fazendo uma coisa. Nenhum pede cartão de crédito nos planos gratuitos (confira as condições atuais de cada um).
+
+| Parte | Serviço | Observação do plano gratuito |
+|---|---|---|
+| Banco PostgreSQL | **Neon** (neon.com) | Banco sempre disponível, com limite de armazenamento |
+| API | **Render** (render.com) | Dorme após ~15 min sem uso; o primeiro acesso depois disso leva cerca de 1 minuto |
+| Site | **Vercel** (vercel.com) | Sem limitação relevante para este uso |
+
+Antes de começar, coloque o projeto num repositório **GitHub** (`git push`); Render e Vercel publicam a partir dele.
+
+**1. Banco (Neon).** Crie um projeto e copie a *connection string* (`postgresql://usuario:senha@host/banco?sslmode=require`).
+
+**2. Tabelas e dados.** No seu computador, uma única vez, apontando para o Neon:
+
+```powershell
+# PowerShell
+$env:DATABASE_URL="COLE_A_CONNECTION_STRING"
+npm --prefix apps/api run db:setup
+```
+
+```bash
+# macOS / Linux
+DATABASE_URL="COLE_A_CONNECTION_STRING" npm --prefix apps/api run db:setup
+```
+
+**3. API (Render).** *New → Blueprint* e escolha o repositório (o `render.yaml` já traz a configuração). Quando pedir, cole a `DATABASE_URL` do Neon. Ao terminar, teste `https://SUA-API.onrender.com/health`: deve responder `{"status":"ok"}`. A API aplica migrations pendentes sozinha a cada início.
+
+**4. Site (Vercel).** *Add New → Project*, escolha o repositório e configure:
+
+- **Root Directory**: `apps/web`
+- **Environment Variable**: `API_URL` = `https://SUA-API.onrender.com` (sem barra no final)
+
+Publique e abra a URL gerada. O navegador fala só com a Vercel, que encaminha `/api/*` para o Render; por isso não há CORS para configurar.
+
+**Cuidados**
+
+- A aplicação **não tem login** (fora do escopo do case). Quem tiver o link consegue ver e editar. Use **apenas dados fictícios** e não divulgue o link além de quem vai avaliar.
+- O Render gratuito "acorda" devagar: se a tela mostrar erro no primeiro acesso, aguarde um minuto e clique em "Tentar de novo".
+- `REFERENCE_DATE=2026-10-15` está no `render.yaml` para reproduzir o cenário do case. Apague a variável no Render para usar a data real.
+
+---
+
 ## 2. Estrutura do repositório
 
 ```
@@ -101,12 +145,12 @@ docker-compose.yml               PostgreSQL local
 
 A pergunta que a tela responde é: **"qual negociação eu preciso trabalhar hoje?"**
 
-- **Faixa "Hoje"** no topo: *"3 negociações pedem ação hoje"*, com as mais urgentes e o motivo de cada uma, a um clique do detalhe. Se não houver nada, a tela diz isso explicitamente.
-- **Kanban** com uma coluna por etapa (5 etapas + Perdida). Cada coluna mostra a quantidade e o valor somado. Dentro da coluna, os cards mais urgentes vêm primeiro.
-- **Card**: empresa, brinde e quantidade, valor, vendedor, tempo desde o último contato, evento do cliente e **o principal motivo de atenção em texto**. A urgência usa borda colorida **e** selo escrito ("Urgente" / "Atenção"), nunca só cor.
+- **Painel "Hoje"** no topo, único resumo da tela: à esquerda, *"3 negociações precisam de ação hoje"* com as mais urgentes e o motivo de cada uma; à direita, o valor em negociação e as vendas fechadas. Cada informação aparece uma vez.
+- **Quadro Kanban** sem rolagem lateral: as 4 etapas em andamento ocupam a largura toda e **Fechamento e Perdida** ficam numa área própria, "Encerradas", porque dali a oportunidade não sai mais. Cada coluna mostra quantidade, valor somado e uma frase explicando a etapa.
+- **Card**: empresa e valor, brinde e quantidade, o principal motivo de atenção em texto ("Urgente: sem contato há 9 dias…"), vendedor, último contato e evento. A urgência usa borda e texto, nunca só cor.
 - **Arrastar e soltar** entre colunas, com atualização otimista que é desfeita se o servidor recusar. As colunas de destino válidas se destacam. Quem não usa mouse tem o mesmo caminho no painel de detalhe, em **"Mover para"**.
 - **Lista** (alternativa ao Kanban) com ordenação por atenção, empresa, valor, último contato e evento, e filtro por etapa.
-- **Busca** (empresa, brinde ou código) com *debounce*, **filtro por vendedor** e **"Só com atenção"**.
+- **Busca** (empresa, brinde ou código) com *debounce*, **filtro por vendedor** e **"Só com ação hoje"**.
 - **Painel de detalhe**: alertas, dados, brindes, ações (registrar contato hoje, editar, mover) e histórico de etapas.
 - **Estados**: carregamento (esqueleto com a forma do quadro), erro com "Tentar de novo", ausência de resultados com "Limpar filtros" e coluna vazia. Mensagens de recusa vêm do backend e dizem o que fazer; quando faltam dados, o aviso oferece **"Completar dados"**, que abre o formulário.
 - **Perdida** abre uma janela pedindo o motivo, com sugestões de um clique.
@@ -338,7 +382,7 @@ Os testes de integração rodam só com `TEST_DATABASE_URL` definido e **apagam 
 - **Criação de oportunidade** existe na API, mas não há formulário na tela (não era o foco do case).
 - **Sem testes automatizados de interface** (E2E, por exemplo com Playwright); a UI foi verificada com `tsc`, `next build` e chamadas pelo *proxy*.
 - Dias corridos, sem calendário de feriados, nas regras de atenção.
-- Sem *docker* para API e web; o `docker-compose` cobre só o banco.
+- Sem Dockerfile para API e web; o `docker-compose` cobre só o banco (a hospedagem usa Render, Neon e Vercel).
 
 ---
 
