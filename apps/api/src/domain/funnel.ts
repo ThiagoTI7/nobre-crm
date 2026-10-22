@@ -1,5 +1,4 @@
-// Regras do funil comercial. Módulo PURO (sem I/O): é a fonte da verdade usada
-// pela API e pelos testes. A tela apenas consome o resultado.
+
 
 export const STAGES = [
   'primeiro_contato',
@@ -32,25 +31,7 @@ export function isFinalStage(stage: Stage): boolean {
   return FINAL_STAGES.includes(stage);
 }
 
-/**
- * Mapa de transições permitidas (origem -> destinos).
- *
- * Avanço: sempre uma etapa por vez, sem pular (o funil precisa refletir o que
- * realmente aconteceu; pular etapas esconde proposta não enviada / sem follow-up).
- * Fechamento só sai de Forecast (regra do enunciado).
- *
- * Retornos permitidos (o cliente pede revisão ou o negócio esfria):
- *  - Follow-up -> Apresentação de Orçamento: cliente pediu revisão da proposta.
- *  - Forecast  -> Follow-up: a previsão caiu; voltou a ser negociação aberta.
- *  - Forecast  -> Apresentação de Orçamento: escopo/preço mudou e há nova proposta.
- *
- * Retornos NÃO permitidos:
- *  - Qualquer volta para Primeiro Contato: o lead já foi contatado; "descontatar"
- *    falsearia o SLA de atendimento. Se o lead sumiu, o caminho é Perdida.
- *  - Apresentação -> Primeiro Contato: mesmo motivo.
- *  - Sair de Fechamento/Perdida: estados finais. Reabrir um negócio = criar nova
- *    oportunidade (preserva o histórico e as métricas de conversão).
- */
+
 export const ALLOWED_TRANSITIONS: Record<Stage, readonly Stage[]> = {
   primeiro_contato: ['apresentacao_orcamento', 'perdida'],
   apresentacao_orcamento: ['follow_up', 'perdida'],
@@ -75,12 +56,7 @@ export const MISSING_FIELD_LABELS: Record<MissingField, string> = {
   lossReason: 'motivo da perda',
 };
 
-/**
- * Requisitos para ESTAR em cada etapa (verificados ao entrar e ao editar).
- *  - Apresentação de Orçamento: valor + item (regra do enunciado).
- *  - Follow-up: + validade da proposta (não há follow-up sem proposta enviada).
- *  - Forecast/Fechamento: + data do evento (sem ela não há como prever entrega).
- */
+
 export const STAGE_REQUIREMENTS: Partial<Record<Stage, readonly MissingField[]>> = {
   apresentacao_orcamento: ['estimatedValue', 'items'],
   follow_up: ['estimatedValue', 'items', 'proposalValidUntil'],
@@ -107,11 +83,11 @@ function isPresent(field: MissingField, opp: OpportunitySnapshot): boolean {
     case 'eventDate':
       return !!opp.eventDate;
     case 'lossReason':
-      return false; // tratado separadamente
+      return false; 
   }
 }
 
-/** Campos que faltam para a oportunidade poder estar na etapa `stage`. */
+
 export function missingRequirements(stage: Stage, opp: OpportunitySnapshot): MissingField[] {
   const required = STAGE_REQUIREMENTS[stage] ?? [];
   return required.filter((f) => !isPresent(f, opp));
@@ -135,7 +111,7 @@ export function normalizeLossReason(reason: string | null | undefined): string |
   return trimmed ? trimmed : null;
 }
 
-/** Valida a mudança de etapa. Retorna `null` se válida, ou o motivo da recusa. */
+
 export function validateTransition(
   opp: OpportunitySnapshot,
   to: Stage,
@@ -189,7 +165,7 @@ export function validateTransition(
   return null;
 }
 
-/** Etapas para as quais a oportunidade pode ir (apenas pelo mapa; requisitos à parte). */
+
 export function allowedTargets(stage: Stage): readonly Stage[] {
   return ALLOWED_TRANSITIONS[stage];
 }
