@@ -6,7 +6,7 @@ export const brl = (v: number | null) =>
 export const brlExact = (v: number | null) =>
   v === null ? '—' : v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-/** "2026-10-15" -> "15/10/2026" (sem passar por Date: sem surpresas de fuso). */
+
 export function dateBR(iso: string | null, short = false): string {
   if (!iso) return '—';
   const [y, m, d] = iso.split('-');
@@ -24,7 +24,7 @@ function utc(iso: string): number {
 
 export const daysBetween = (from: string, to: string) => Math.round((utc(to) - utc(from)) / 86_400_000);
 
-/** "hoje", "ontem", "há 5 dias", "em 3 dias", "amanhã". */
+
 export function relativeDay(iso: string | null, today: string): string {
   if (!iso) return 'sem registro';
   const diff = daysBetween(today, iso);
