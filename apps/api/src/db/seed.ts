@@ -2,7 +2,7 @@ import type { Pool } from 'pg';
 import { createPool } from './pool';
 import { SEED_OPPORTUNITIES } from './seed-data';
 
-/** Carga idempotente: registros existentes (mesmo code) não são alterados. */
+
 export async function seed(pool: Pool, { reset = false }: { reset?: boolean } = {}): Promise<number> {
   const client = await pool.connect();
   let inserted = 0;
