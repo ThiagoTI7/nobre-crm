@@ -1,5 +1,4 @@
-# Apenas o PostgreSQL. API e web rodam com `npm run dev` (ver README).
-# As credenciais abaixo são de DESENVOLVIMENTO LOCAL; em produção use um secrets manager.
+
 services:
   db:
     image: postgres:16-alpine
