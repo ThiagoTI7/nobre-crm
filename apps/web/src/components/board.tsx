@@ -14,10 +14,7 @@ interface Props {
   onMove: (opp: Opportunity, to: Stage) => void;
 }
 
-/**
- * Etapas em andamento ocupam a largura toda (sem rolagem lateral); Fechamento e
- * Perdida ficam numa área própria, "Encerradas", porque dali a oportunidade não sai mais.
- */
+
 export function KanbanBoard({ meta, opportunities, today, onOpen, onMove }: Props) {
   const [dragging, setDragging] = useState<Opportunity | null>(null);
   const [over, setOver] = useState<Stage | null>(null);
@@ -37,8 +34,7 @@ export function KanbanBoard({ meta, opportunities, today, onOpen, onMove }: Prop
         aria-label={`${stage.label}: ${cards.length} oportunidades`}
         onDragOver={(e) => {
           if (!dragging) return;
-          // Permite soltar em qualquer coluna para o backend explicar a recusa;
-          // visualmente só as válidas se destacam.
+   
           e.preventDefault();
           setOver(stage.key);
         }}
