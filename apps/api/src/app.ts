@@ -25,11 +25,11 @@ import * as repo from './repo';
 
 export interface AppDeps {
   pool: Pool;
-  /** Data "de hoje" (YYYY-MM-DD). Injetável para testes e para fixar a data do case. */
+
   today: () => string;
   corsOrigins?: string[];
   logger?: boolean;
-  /** Atrás de proxy (Render, etc.): usa o IP real do cliente no rate limit. */
+
   trustProxy?: boolean;
 }
 
@@ -87,7 +87,7 @@ const digestQuerySchema = z.object({
 
 const codeParams = z.object({ code: z.string().regex(/^OPP-\d+$/, 'Código inválido.') });
 
-// ---------------------------------------------------------------- helpers ---
+
 
 type WithAttention = repo.Opportunity & { attention: AttentionResult };
 
@@ -96,7 +96,7 @@ const withAttention = (o: repo.Opportunity, today: string): WithAttention => ({
   attention: evaluateAttention(o, today),
 });
 
-/** Mais urgente primeiro; empate: evento mais próximo; depois código. */
+
 function byPriority(a: WithAttention, b: WithAttention): number {
   return (
     b.attention.score - a.attention.score ||
@@ -111,7 +111,7 @@ function assertNotFuture(date: string | null | undefined, today: string, field: 
   }
 }
 
-// -------------------------------------------------------------------- app ---
+
 
 export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
   const { pool, today } = deps;
@@ -134,7 +134,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
         },
       });
     }
-    // Violação de CHECK/FK no banco: a API deveria ter barrado antes; resposta genérica.
+ 
     if (typeof err.code === 'string' && err.code.startsWith('23')) {
       req.log.warn({ err }, 'violação de constraint');
       return reply.status(422).send({ error: { code: 'CONSTRAINT_VIOLATION', message: 'Os dados violam uma regra de integridade.' } });
@@ -155,8 +155,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     return { status: 'ok' };
   });
 
-  // Metadados para a tela: etapas, transições válidas e requisitos vêm do backend,
-  // então a UI nunca "adivinha" regras (e não diverge delas).
+
   app.get('/api/meta', async () => ({
     today: today(),
     stages: STAGES.map((key) => ({ key, label: STAGE_LABELS[key], final: isFinalStage(key) })),
@@ -212,7 +211,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     return withAttention(await repo.registerContact(pool, code, date), today());
   });
 
-  // ---- Automação: follow-up esquecido --------------------------------------
+
 
   app.get('/api/attention', async () => {
     const t = today();
