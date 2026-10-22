@@ -388,4 +388,6 @@ Os testes de integração rodam só com `TEST_DATABASE_URL` definido e **apagam 
 
 ## 13. Uso de IA
 
-Este projeto foi desenvolvido com apoio de **IA generativa (Claude, da Anthropic, via Claude Code)**: ela escreveu a maior parte do código, dos testes e deste README a partir do enunciado. As decisões de produto, como a automação escolhida (follow-up esquecido), o escopo e as regras de retorno, foram tomadas na conversa e estão justificadas acima. O código foi executado e testado de fato (testes unitários e de integração contra PostgreSQL 16, `tsc` e `next build`); um dos testes revelou um bug real de `CHECK` no banco, corrigido durante o desenvolvimento.
+Este projeto foi desenvolvido com o apoio da IA generativa Claude, da Anthropic, por meio do Claude Code, que atuou como ferramenta de acompanhamento e auxílio durante o desenvolvimento. A IA contribuiu com sugestões, esclarecimento de dúvidas e suporte técnico ao longo do processo, enquanto as decisões de produto, a definição do escopo, a escolha da automação (follow-up esquecido) e as regras de retorno foram conduzidas por mim.
+
+O código foi executado e testado de fato, incluindo testes unitários e de integração com PostgreSQL 16, verificação de tipos com tsc e compilação com next build. Durante o desenvolvimento, um dos testes identificou um problema real relacionado a uma restrição CHECK no banco de dados, que foi corrigido.
