@@ -5,7 +5,7 @@ import { createPool } from './pool';
 
 const MIGRATIONS_DIR = path.resolve(__dirname, '../../migrations');
 
-/** Aplica, em ordem e dentro de transação, as migrations ainda não executadas. */
+
 export async function migrate(pool: Pool): Promise<string[]> {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS schema_migrations (
