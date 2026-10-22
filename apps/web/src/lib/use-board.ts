@@ -22,7 +22,7 @@ export function useBoard(params: { q: string; seller: string }) {
       else setStatus('loading');
       try {
         const [m, list] = await Promise.all([api.meta(), api.list(params)]);
-        if (id !== requestId.current) return; // resposta de uma busca antiga
+        if (id !== requestId.current) return; 
         setMeta(m);
         setData(list.data);
         setAsOf(list.asOf);
@@ -35,7 +35,7 @@ export function useBoard(params: { q: string; seller: string }) {
         if (id === requestId.current) setRefreshing(false);
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  
     [params.q, params.seller],
   );
 
