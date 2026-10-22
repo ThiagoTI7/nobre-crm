@@ -6,7 +6,7 @@ export const LEVEL_STYLES = {
   none: { bar: 'border-l-transparent', badge: '', dot: 'bg-line', label: '' },
 } as const;
 
-/** Rótulo em texto + cor: a urgência nunca depende só da cor. */
+
 export function AttentionBadge({ level }: { level: Attention['level'] }) {
   if (level === 'none') return null;
   const s = LEVEL_STYLES[level];
@@ -15,5 +15,5 @@ export function AttentionBadge({ level }: { level: Attention['level'] }) {
   );
 }
 
-/** Motivos que exigem ação (sem as dicas informativas). */
+
 export const actionReasons = (a: Attention) => a.reasons.filter((r) => r.severity !== 'info');
