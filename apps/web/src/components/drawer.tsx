@@ -10,7 +10,7 @@ interface Props {
   code: string;
   meta: Meta;
   today: string;
-  /** Muda a cada alteração feita fora do painel (ex.: arrastar o card) para recarregar o detalhe. */
+
   version: number;
   startEditing: boolean;
   onClose: () => void;
