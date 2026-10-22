@@ -8,7 +8,7 @@ import {
 } from '../src/domain/attention';
 import { addDays, currentDate, daysBetween, isIsoDate, todayInSaoPaulo } from '../src/domain/dates';
 
-const TODAY = '2026-10-15'; // data de referência do case
+const TODAY = '2026-10-15'; 
 
 const opp = (over: Partial<AttentionInput> = {}): AttentionInput => ({
   stage: 'follow_up',
