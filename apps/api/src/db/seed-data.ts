@@ -1,14 +1,6 @@
 import type { Stage } from '../domain/funnel';
 
-// Carga inicial: os 7 registros do case (data de referência 15/10/2026).
-// Células em branco do enunciado ficam NULL (não inventamos dados).
-//
-// Observações sobre o dado de origem:
-//  - OPP-2001: sem validade de proposta (ainda não houve proposta) — coerente com Primeiro Contato.
-//  - OPP-2003: evento (18/10) é ANTES da validade da proposta (20/10) — inconsistência real,
-//    sinalizada pela automação.
-//  - OPP-2007 (Perdida): o case não traz motivo. O banco exige motivo para Perdida, então o
-//    registro legado recebe o texto-padrão abaixo, claramente marcado como não informado.
+
 
 export const LEGACY_LOSS_REASON = 'Não informado (registro legado)';
 
