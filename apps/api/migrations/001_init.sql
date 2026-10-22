@@ -1,6 +1,4 @@
--- Schema inicial do CRM da Nobre Brindes.
--- Estado final (fechamento/perdida) e invariantes básicas também são protegidos no banco,
--- como segunda linha de defesa além da validação da API.
+
 
 CREATE SEQUENCE opportunity_code_seq START 2008;
 
@@ -23,8 +21,7 @@ CREATE TABLE opportunities (
     'primeiro_contato', 'apresentacao_orcamento', 'follow_up', 'forecast', 'fechamento', 'perdida'
   )),
   CONSTRAINT value_non_negative CHECK (estimated_value IS NULL OR estimated_value >= 0),
-  -- Depois do primeiro contato (e fora de "perdida") precisa existir valor estimado > 0.
-  -- COALESCE: em CHECK, NULL "passa"; sem isso um valor nulo escaparia da regra.
+
   CONSTRAINT value_required_after_first_contact CHECK (
     stage IN ('primeiro_contato', 'perdida') OR COALESCE(estimated_value, 0) > 0
   ),
@@ -49,7 +46,7 @@ CREATE INDEX opportunity_items_opportunity_idx ON opportunity_items (opportunity
 CREATE TABLE stage_history (
   id               bigserial PRIMARY KEY,
   opportunity_code text NOT NULL REFERENCES opportunities (code) ON DELETE CASCADE,
-  from_stage       text,                -- NULL = criação da oportunidade
+  from_stage       text,                
   to_stage         text NOT NULL,
   note             text,
   changed_at       timestamptz NOT NULL DEFAULT now()
