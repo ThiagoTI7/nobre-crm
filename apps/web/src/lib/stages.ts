@@ -1,6 +1,6 @@
 import type { Stage } from './types';
 
-/** Cor de cada etapa: do cinza (início) ao verde (ganho); a cor indica o avanço no funil. */
+/
 export const STAGE_COLORS: Record<Stage, string> = {
   primeiro_contato: '#6b7b76',
   apresentacao_orcamento: '#2f6f8f',
@@ -10,7 +10,7 @@ export const STAGE_COLORS: Record<Stage, string> = {
   perdida: '#a0aaa6',
 };
 
-/** Frase curta que explica o que cada etapa significa. */
+
 export const STAGE_HINTS: Record<Stage, string> = {
   primeiro_contato: 'Lead novo, ainda sem proposta',
   apresentacao_orcamento: 'Montando ou enviando o orçamento',
