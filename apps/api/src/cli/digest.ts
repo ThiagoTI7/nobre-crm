@@ -1,10 +1,4 @@
-// Job da automação "follow-up esquecido".
-//   npm run digest                    -> imprime o resumo de todos os vendedores
-//   npm run digest -- --seller Ana    -> apenas uma pessoa
-//   npm run digest -- --json          -> saída estruturada
-//   npm run digest -- --send          -> envia o Markdown ao webhook (DIGEST_WEBHOOK_URL)
-//
-// Pensado para rodar por agendador (cron/GitHub Actions/Cloud Scheduler) toda manhã útil.
+
 
 import 'dotenv/config';
 import { createPool } from '../db/pool';
@@ -34,7 +28,7 @@ async function main() {
     if (flag('send')) {
       const url = process.env.DIGEST_WEBHOOK_URL;
       if (!url) throw new Error('Defina DIGEST_WEBHOOK_URL para usar --send.');
-      // Formato compatível com webhooks do Slack/Teams ({ text }).
+
       const res = await fetch(url, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
