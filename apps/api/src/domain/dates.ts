@@ -1,6 +1,3 @@
-// Datas de negócio trabalham sempre como string ISO "YYYY-MM-DD" (sem fuso),
-// o mesmo formato da coluna `date` do PostgreSQL. Isso evita o bug clássico de
-// "um dia a menos" ao converter Date <-> string em fusos diferentes.
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -16,7 +13,6 @@ function toUtcMs(iso: string): number {
   return Date.UTC(y, m - 1, d);
 }
 
-/** Dias inteiros de `from` até `to` (positivo se `to` é depois de `from`). */
 export function daysBetween(from: string, to: string): number {
   return Math.round((toUtcMs(to) - toUtcMs(from)) / 86_400_000);
 }
@@ -26,7 +22,7 @@ export function addDays(iso: string, days: number): string {
   return dt.toISOString().slice(0, 10);
 }
 
-/** Data de hoje em America/Sao_Paulo, no formato YYYY-MM-DD. */
+
 export function todayInSaoPaulo(now: Date = new Date()): string {
   const parts = new Intl.DateTimeFormat('en-CA', {
     timeZone: 'America/Sao_Paulo',
@@ -34,13 +30,10 @@ export function todayInSaoPaulo(now: Date = new Date()): string {
     month: '2-digit',
     day: '2-digit',
   }).format(now);
-  return parts; // en-CA => YYYY-MM-DD
+  return parts; 
 }
 
-/**
- * "Hoje" do sistema. REFERENCE_DATE permite fixar a data (usada para reproduzir
- * o cenário do case, cuja data de referência é 2026-10-15).
- */
+
 export function currentDate(env: NodeJS.ProcessEnv = process.env): string {
   const ref = env.REFERENCE_DATE?.trim();
   if (ref) {
