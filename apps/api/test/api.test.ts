@@ -1,5 +1,4 @@
-// Testes de integração: API + PostgreSQL reais.
-// Rodam apenas com TEST_DATABASE_URL (o schema desse banco é APAGADO e recriado).
+
 import type { FastifyInstance } from 'fastify';
 import type { Pool } from 'pg';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
